@@ -56,7 +56,7 @@ find_library(BLOSC_LIBRARY
   PATHS
   /usr/lib
   /usr/local/lib
-  /usr/local/mapd-deps/lib
+  /home/danwong/apps/mapd-deps/lib
   /usr/local/homebrew/lib
   /opt/local/lib)
 

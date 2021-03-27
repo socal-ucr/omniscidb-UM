@@ -22,13 +22,13 @@ while (( $# )); do
   shift
 done
 
-SUFFIX=${SUFFIX:=$(date +%Y%m%d)}
-PREFIX=${MAPD_PATH:="/usr/local/mapd-deps/$SUFFIX"}
+SUFFIX=v5.5.2
+PREFIX=${MAPD_PATH:="/home/danwong/apps/mapd-deps/$SUFFIX"}
 if [ ! -w $(dirname $PREFIX) ] ; then
     SUDO=sudo
 fi
-$SUDO mkdir -p $PREFIX
-$SUDO chown -R $(id -u) $PREFIX
+mkdir -p $PREFIX
+chown -R $(id -u) $PREFIX
 
 export PATH=$PREFIX/bin:$PATH
 export LD_LIBRARY_PATH=$PREFIX/lib64:$PREFIX/lib:$LD_LIBRARY_PATH
@@ -40,28 +40,28 @@ SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $SCRIPTS_DIR/common-functions.sh
 
 
-sudo yum groupinstall -y "Development Tools"
-sudo yum install -y \
-    zlib-devel \
-    epel-release \
-    which \
-    libssh \
-    openssl-devel \
-    ncurses-devel \
-    git \
-    java-1.8.0-openjdk-devel \
-    java-1.8.0-openjdk-headless \
-    gperftools \
-    gperftools-devel \
-    gperftools-libs \
-    python-devel \
-    wget \
-    curl \
-    python3 \
-    openldap-devel
-sudo yum install -y \
-    jq \
-    pxz
+#sudo yum groupinstall -y "Development Tools"
+#sudo yum install -y \
+#    zlib-devel \
+#    epel-release \
+#    which \
+#    libssh \
+#    openssl-devel \
+#    ncurses-devel \
+#    git \
+#    java-1.8.0-openjdk-devel \
+#    java-1.8.0-openjdk-headless \
+#    gperftools \
+#    gperftools-devel \
+#    gperftools-libs \
+#    python-devel \
+#    wget \
+#    curl \
+#    python3 \
+#    openldap-devel
+#sudo yum install -y \
+#    jq \
+#    pxz
 
 # gmp, mpc, mpfr, autoconf, automake
 # note: if gmp fails on POWER8:
@@ -71,13 +71,13 @@ sudo yum install -y \
 download_make_install ${HTTP_DEPS}/gmp-6.1.2.tar.xz "" "--enable-fat"
 # http://www.mpfr.org/mpfr-current/mpfr-3.1.5.tar.xz
 download_make_install ${HTTP_DEPS}/mpfr-4.0.1.tar.xz "" "--with-gmp=$PREFIX"
-download_make_install ftp://ftp.gnu.org/gnu/mpc/mpc-1.1.0.tar.gz "" "--with-gmp=$PREFIX"
-download_make_install ftp://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.xz # "" "--build=powerpc64le-unknown-linux-gnu"
-download_make_install ftp://ftp.gnu.org/gnu/automake/automake-1.16.1.tar.xz
+download_make_install https://ftp.gnu.org/gnu/mpc/mpc-1.1.0.tar.gz "" "--with-gmp=$PREFIX"
+download_make_install https://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.xz # "" "--build=powerpc64le-unknown-linux-gnu"
+download_make_install https://ftp.gnu.org/gnu/automake/automake-1.16.1.tar.xz
 
 # gcc
 VERS=8.4.0
-download ftp://ftp.gnu.org/gnu/gcc/gcc-$VERS/gcc-$VERS.tar.xz
+download https://ftp.gnu.org/gnu/gcc/gcc-$VERS/gcc-$VERS.tar.xz
 extract gcc-$VERS.tar.xz
 pushd gcc-$VERS
 export CPPFLAGS="-I$PREFIX/include"
@@ -110,7 +110,7 @@ install_maven
 
 install_cmake
 
-download_make_install ftp://ftp.gnu.org/gnu/libtool/libtool-2.4.6.tar.gz
+download_make_install https://ftp.gnu.org/gnu/libtool/libtool-2.4.6.tar.gz
 
 # http://zlib.net/zlib-1.2.8.tar.xz
 download_make_install ${HTTP_DEPS}/zlib-1.2.8.tar.xz
@@ -132,14 +132,14 @@ download_make_install ${HTTP_DEPS}/openssl-1.0.2u.tar.gz "" "linux-$(uname -m) n
 CFLAGS="-fPIC" download_make_install ${HTTP_DEPS}/xz-5.2.4.tar.xz "" "--disable-shared --with-pic"
 CFLAGS="-fPIC" download_make_install ${HTTP_DEPS}/libarchive-3.3.2.tar.gz "" "--without-openssl --disable-shared"
 
-CFLAGS="-fPIC" download_make_install ftp://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz # "" "--build=powerpc64le-unknown-linux-gnu"
+CFLAGS="-fPIC" download_make_install https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.1.tar.gz # "" "--build=powerpc64le-unknown-linux-gnu"
 
-download_make_install ftp://ftp.gnu.org/gnu/bison/bison-3.4.2.tar.xz # "" "--build=powerpc64le-unknown-linux-gnu"
+download_make_install https://ftp.gnu.org/gnu/bison/bison-3.4.2.tar.xz # "" "--build=powerpc64le-unknown-linux-gnu"
 
 # https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/flexpp-bisonpp/bisonpp-1.21-45.tar.gz
 download_make_install ${HTTP_DEPS}/bisonpp-1.21-45.tar.gz bison++-1.21
 
-CFLAGS="-fPIC" download_make_install ftp://ftp.gnu.org/gnu/readline/readline-7.0.tar.gz
+CFLAGS="-fPIC" download_make_install https://ftp.gnu.org/gnu/readline/readline-7.0.tar.gz
 
 VERS=1_72_0
 # http://downloads.sourceforge.net/project/boost/boost/${VERS//_/.}/boost_$VERS.tar.bz2

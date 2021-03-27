@@ -3,7 +3,7 @@
 set -e
 #set -x
 
-PREFIX=/usr/local/mapd-deps
+PREFIX=/home/danwong/apps/mapd-deps
 
 # Establish distro
 source /etc/os-release
@@ -14,7 +14,7 @@ if [ "$ID" == "ubuntu" ] ; then
     exit 1
   fi
 elif [ "$ID" == "centos" ] ; then
-  MODPATH=/etc/modulefiles
+  MODPATH=/home/danwong/.modules
   PACKAGER="yum -y"
   if [ "$VERSION_ID" != "7" ] ; then
     echo "CentOS 7 is the only fedora-based release supported by this script"
@@ -194,21 +194,21 @@ elif [ "$ID" == "centos" ] ; then
     source /etc/profile
   fi
 
-  sudo mkdir -p $PREFIX
+  mkdir -p $PREFIX
   pushd $PREFIX
-  sudo wget --continue https://dependencies.mapd.com/mapd-deps/mapd-deps-$FLAG.tar.xz
+  wget --continue https://dependencies.mapd.com/mapd-deps/mapd-deps-$FLAG.tar.xz
   DIRNAME=$(tar tf mapd-deps-$FLAG.tar.xz | head -n 2 | tail -n 1 | xargs dirname)
-  sudo tar xvf mapd-deps-$FLAG.tar.xz
-  sudo rm -f mapd-deps-$FLAG.tar.xz
+  tar xvf mapd-deps-$FLAG.tar.xz
+  rm -f mapd-deps-$FLAG.tar.xz
   MODFILE=$(readlink -e $(ls $DIRNAME/*modulefile | head -n 1))
   popd
 
-  sudo mkdir -p $MODPATH/mapd-deps
-  sudo ln -sf $MODFILE $MODPATH/mapd-deps/$DIRNAME
+  mkdir -p $MODPATH/mapd-deps
+  ln -sf $MODFILE $MODPATH/mapd-deps/$DIRNAME
 
   if [ ! -e "$MODPATH/cuda" ]; then
     pushd $MODPATH
-    sudo wget --continue https://dependencies.mapd.com/mapd-deps/cuda
+    wget --continue https://dependencies.mapd.com/mapd-deps/cuda
     popd
   fi
 
