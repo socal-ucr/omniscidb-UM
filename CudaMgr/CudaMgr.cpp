@@ -25,6 +25,12 @@
 
 #include "Logger/Logger.h"
 
+
+// editted
+#include <cuda_runtime_api.h>
+#include <cuda.h>
+
+
 namespace CudaMgr_Namespace {
 
 CudaErrorException::CudaErrorException(CUresult status)
@@ -111,8 +117,8 @@ void CudaMgr::copyHostToDevice(int8_t* device_ptr,
                                const size_t num_bytes,
                                const int device_num) {
   setContext(device_num);
-  checkError(
-      cuMemcpyHtoD(reinterpret_cast<CUdeviceptr>(device_ptr), host_ptr, num_bytes));
+//  checkError(
+  //    cuMemcpyHtoD(reinterpret_cast<CUdeviceptr>(device_ptr), host_ptr, num_bytes));
 }
 
 void CudaMgr::copyDeviceToHost(int8_t* host_ptr,
@@ -120,8 +126,8 @@ void CudaMgr::copyDeviceToHost(int8_t* host_ptr,
                                const size_t num_bytes,
                                const int device_num) {
   setContext(device_num);
-  checkError(
-      cuMemcpyDtoH(host_ptr, reinterpret_cast<const CUdeviceptr>(device_ptr), num_bytes));
+ // checkError(
+   //   cuMemcpyDtoH(host_ptr, reinterpret_cast<const CUdeviceptr>(device_ptr), num_bytes));
 }
 
 void CudaMgr::copyDeviceToDevice(int8_t* dest_ptr,
@@ -133,15 +139,15 @@ void CudaMgr::copyDeviceToDevice(int8_t* dest_ptr,
   // (real_device_num - start_gpu_)
   if (src_device_num == dest_device_num) {
     setContext(src_device_num);
-    checkError(cuMemcpy(reinterpret_cast<CUdeviceptr>(dest_ptr),
-                        reinterpret_cast<CUdeviceptr>(src_ptr),
-                        num_bytes));
+   // checkError(cuMemcpy(reinterpret_cast<CUdeviceptr>(dest_ptr),
+ //                       reinterpret_cast<CUdeviceptr>(src_ptr),
+     //                   num_bytes));
   } else {
-    checkError(cuMemcpyPeer(reinterpret_cast<CUdeviceptr>(dest_ptr),
-                            device_contexts_[dest_device_num],
-                            reinterpret_cast<CUdeviceptr>(src_ptr),
-                            device_contexts_[src_device_num],
-                            num_bytes));  // will we always have peer?
+    //checkError(cuMemcpyPeer(reinterpret_cast<CUdeviceptr>(dest_ptr),
+      //                      device_contexts_[dest_device_num],
+        //                    reinterpret_cast<CUdeviceptr>(src_ptr),
+ //                           device_contexts_[src_device_num],
+   //                         num_bytes));  // will we always have peer?
   }
 }
 
@@ -246,25 +252,30 @@ void CudaMgr::fillDeviceProperties() {
 int8_t* CudaMgr::allocatePinnedHostMem(const size_t num_bytes) {
   setContext(0);
   void* host_ptr;
-  checkError(cuMemHostAlloc(&host_ptr, num_bytes, CU_MEMHOSTALLOC_PORTABLE));
+ // checkError(cuMemHostAlloc(&host_ptr, num_bytes, CU_MEMHOSTALLOC_PORTABLE));
+  cudaMallocManaged(&host_ptr, num_bytes);
   return reinterpret_cast<int8_t*>(host_ptr);
 }
 
 int8_t* CudaMgr::allocateDeviceMem(const size_t num_bytes, const int device_num) {
   setContext(device_num);
-  CUdeviceptr device_ptr;
-  checkError(cuMemAlloc(&device_ptr, num_bytes));
-  return reinterpret_cast<int8_t*>(device_ptr);
+  //CUdeviceptr device_ptr;
+  void* device_ptr;
+ // checkError(cuMemAlloc(&device_ptr, num_bytes));
+ cudaMallocManaged(&device_ptr, num_bytes); 
+ return reinterpret_cast<int8_t*>(device_ptr);
 }
 
 void CudaMgr::freePinnedHostMem(int8_t* host_ptr) {
-  checkError(cuMemFreeHost(reinterpret_cast<void*>(host_ptr)));
+ // checkError(cuMemFreeHost(reinterpret_cast<void*>(host_ptr)));
+ cudaFree(host_ptr);
 }
 
 void CudaMgr::freeDeviceMem(int8_t* device_ptr) {
   std::lock_guard<std::mutex> gpu_lock(device_cleanup_mutex_);
 
-  checkError(cuMemFree(reinterpret_cast<CUdeviceptr>(device_ptr)));
+ // checkError(cuMemFree(reinterpret_cast<CUdeviceptr>(device_ptr)));
+  cudaFree(device_ptr);
 }
 
 void CudaMgr::zeroDeviceMem(int8_t* device_ptr,
