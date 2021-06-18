@@ -23,7 +23,7 @@ while (( $# )); do
 done
 
 SUFFIX=v5.5.2
-PREFIX=${MAPD_PATH:="/home/danwong/apps/mapd-deps/$SUFFIX"}
+PREFIX=${MAPD_PATH:="/home/aalot016/apps/mapd-deps/$SUFFIX"}
 if [ ! -w $(dirname $PREFIX) ] ; then
     SUDO=sudo
 fi

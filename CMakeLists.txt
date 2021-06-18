@@ -149,7 +149,7 @@ if(XCODE)
   add_definitions("-DXCODE")
 endif()
 
-option(ENABLE_GEOS "Enable GEOS Support" ON)
+option(ENABLE_GEOS "Enable GEOS Support" OFF)
 if (ENABLE_GEOS)
   if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(ENABLE_GEOS OFF CACHE BOOL "Enable GEOS support" FORCE)
